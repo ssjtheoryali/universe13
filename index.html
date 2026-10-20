@@ -4,86 +4,125 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
 		<title>Universe 13: Battle Clash</title>
+		<!-- U13 loading shell (Theory 2026-10-20: "without the Godot loading screen, can we put one there instead").
+		     Godot's web shell logic (template godot.html, 4.7.2) with the Battle Clash key art, a gold progress bar,
+		     MB counter and tips. The art files (loading_wide.jpg / loading_tall.jpg) sit next to index.html. -->
 		<style>
 html, body, #canvas {
 	margin: 0;
 	padding: 0;
 	border: 0;
 }
-
 body {
 	color: white;
-	background-color: black;
+	background-color: #05040a;
 	overflow: hidden;
 	touch-action: none;
 }
-
 #canvas {
 	display: block;
 }
-
 #canvas:focus {
 	outline: none;
 }
-
-#status, #status-splash, #status-progress {
+#status {
+	position: absolute;
+	inset: 0;
+	background: #05040a;
+	visibility: hidden;
+	overflow: hidden;
+	font-family: 'Arial Black', 'Arial', sans-serif;
+	z-index: 10;
+}
+#u13-art {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	object-position: center 30%;
+	animation: u13-zoom 30s ease-out forwards;
+}
+@keyframes u13-zoom { from { transform: scale(1.0); } to { transform: scale(1.08); } }
+#u13-shade {
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(to bottom, rgba(5,4,10,0) 45%, rgba(5,4,10,0.75) 75%, rgba(5,4,10,0.96) 100%);
+}
+#u13-load {
+	position: absolute;
+	left: 50%;
+	bottom: 6%;
+	transform: translateX(-50%);
+	width: min(720px, 86vw);
+	text-align: center;
+}
+#u13-title {
+	color: #ffd24a;
+	font-size: clamp(16px, 2.4vw, 26px);
+	letter-spacing: 0.18em;
+	text-shadow: 0 0 12px rgba(255, 170, 40, 0.8), 0 2px 0 #000;
+	margin-bottom: 12px;
+}
+#u13-bar {
+	position: relative;
+	height: 14px;
+	border-radius: 7px;
+	background: rgba(255, 255, 255, 0.12);
+	border: 1px solid rgba(255, 210, 74, 0.7);
+	box-shadow: 0 0 14px rgba(255, 170, 40, 0.35);
+	overflow: hidden;
+}
+#u13-fill {
 	position: absolute;
 	left: 0;
-	right: 0;
-}
-
-#status, #status-splash {
 	top: 0;
 	bottom: 0;
+	width: 0%;
+	background: linear-gradient(90deg, #ff7a18, #ffd24a 60%, #fff3c0);
+	box-shadow: 0 0 16px #ffb02e;
+	transition: width 0.25s linear;
 }
-
-#status {
-	background-color: #242424;
+#u13-fill.u13-busy {
+	width: 35% !important;
+	animation: u13-sweep 1.2s ease-in-out infinite;
+}
+@keyframes u13-sweep { from { left: -35%; } to { left: 100%; } }
+#u13-meta {
 	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	visibility: hidden;
+	justify-content: space-between;
+	margin-top: 8px;
+	color: #e8e2ff;
+	font: 700 clamp(11px, 1.3vw, 14px) Arial, sans-serif;
+	text-shadow: 0 1px 0 #000;
 }
-
-#status-splash {
-	max-height: 100%;
-	max-width: 100%;
-	margin: auto;
+#u13-tip {
+	margin-top: 14px;
+	min-height: 1.4em;
+	color: #fff;
+	opacity: 0.85;
+	font: italic 700 clamp(11px, 1.4vw, 15px) Arial, sans-serif;
+	text-shadow: 0 1px 2px #000;
+	transition: opacity 0.4s;
 }
-
-#status-splash.show-image--false {
-	display: none;
+#u13-note {
+	margin-top: 6px;
+	color: rgba(255, 255, 255, 0.5);
+	font: 400 clamp(10px, 1.1vw, 12px) Arial, sans-serif;
 }
-
-#status-splash.fullsize--true {
-	height: 100%;
-	width: 100%;
-	object-fit: contain;
-}
-
-#status-splash.use-filter--false {
-	image-rendering: pixelated;
-}
-
-#status-progress, #status-notice {
-	display: none;
-}
-
-#status-progress {
-	bottom: 10%;
-	width: 50%;
-	margin: 0 auto;
-}
-
 #status-notice {
+	display: none;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	max-width: 80vw;
 	background-color: #5b3943;
 	border-radius: 0.5rem;
 	border: 1px solid #9b3943;
 	color: #e0e0e0;
 	font-family: 'Noto Sans', 'Droid Sans', Arial, sans-serif;
 	line-height: 1.3;
-	margin: 0 2rem;
 	overflow: hidden;
 	padding: 1rem;
 	text-align: center;
@@ -106,8 +145,18 @@ body {
 		</noscript>
 
 		<div id="status">
-			<img id="status-splash" class="show-image--true fullsize--true use-filter--true" src="index.png" alt="">
-			<progress id="status-progress"></progress>
+			<picture>
+				<source media="(orientation: portrait)" srcset="loading_tall.jpg">
+				<img id="u13-art" src="loading_wide.jpg" alt="Universe 13: Battle Clash">
+			</picture>
+			<div id="u13-shade"></div>
+			<div id="u13-load">
+				<div id="u13-title">ENTERING THE JUEVYVERSE</div>
+				<div id="u13-bar"><div id="u13-fill" class="u13-busy"></div></div>
+				<div id="u13-meta"><span id="u13-mb">Connecting...</span><span id="u13-pct"></span></div>
+				<div id="u13-tip"></div>
+				<div id="u13-note">First visit downloads the whole game (about 880 MB). Next time it loads from your browser cache.</div>
+			</div>
 			<div id="status-notice"></div>
 		</div>
 
@@ -115,14 +164,40 @@ body {
 		<script src="u13-pack-loader.js"></script>
 		<script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":false,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":843561808,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":false,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":848106684,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
 (function () {
 	const statusOverlay = document.getElementById('status');
-	const statusProgress = document.getElementById('status-progress');
 	const statusNotice = document.getElementById('status-notice');
+	const fill = document.getElementById('u13-fill');
+	const mbText = document.getElementById('u13-mb');
+	const pctText = document.getElementById('u13-pct');
+	const titleText = document.getElementById('u13-title');
+	const tipText = document.getElementById('u13-tip');
+	const loadBox = document.getElementById('u13-load');
+
+	// tips rotate every 5 s while the game downloads
+	const TIPS = [
+		'X X X X: the light string ends in a wall-bounce BREAKER',
+		'Up + Y launches, then jump to chase them into the air',
+		'Hold B for your clasher\'s original power',
+		'Flick the right stick for four more powers: rush, rise, pull, eruption',
+		'LT + Y powers up your ki',
+		'LB / RB / LB+RB: one, three or five bars of ultimate',
+		'Combo Lab: F6 plays the demo of every combo trial',
+		'Every clasher hits in its own element. Find your favourite',
+		'Down + RT fires your signature beam (no meter)',
+		'Perfect guard with LT right as the hit lands',
+	];
+	let tipI = Math.floor(Math.random() * TIPS.length);
+	function nextTip() {
+		tipText.style.opacity = 0;
+		setTimeout(() => { tipText.textContent = 'TIP: ' + TIPS[tipI % TIPS.length]; tipText.style.opacity = 0.85; tipI++; }, 400);
+	}
+	nextTip();
+	const tipTimer = setInterval(nextTip, 5000);
 
 	let initializing = true;
 	let statusMode = '';
@@ -132,12 +207,13 @@ const engine = new Engine(GODOT_CONFIG);
 			return;
 		}
 		if (mode === 'hidden') {
+			clearInterval(tipTimer);
 			statusOverlay.remove();
 			initializing = false;
 			return;
 		}
 		statusOverlay.style.visibility = 'visible';
-		statusProgress.style.display = mode === 'progress' ? 'block' : 'none';
+		loadBox.style.display = mode === 'progress' ? 'block' : 'none';
 		statusNotice.style.display = mode === 'notice' ? 'block' : 'none';
 		statusMode = mode;
 	}
@@ -206,11 +282,19 @@ const engine = new Engine(GODOT_CONFIG);
 		engine.startGame({
 			'onProgress': function (current, total) {
 				if (current > 0 && total > 0) {
-					statusProgress.value = current;
-					statusProgress.max = total;
+					fill.classList.remove('u13-busy');
+					const k = Math.min(1, current / total);
+					fill.style.width = (k * 100).toFixed(1) + '%';
+					mbText.textContent = Math.round(current / 1e6) + ' / ' + Math.round(total / 1e6) + ' MB';
+					pctText.textContent = Math.floor(k * 100) + '%';
+					if (k >= 1) {
+						titleText.textContent = 'STARTING BATTLE CLASH';
+						fill.classList.add('u13-busy');
+						mbText.textContent = 'Unpacking the game...';
+						pctText.textContent = '';
+					}
 				} else {
-					statusProgress.removeAttribute('value');
-					statusProgress.removeAttribute('max');
+					fill.classList.add('u13-busy');
 				}
 			},
 		}).then(() => {
