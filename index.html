@@ -6,7 +6,8 @@
 		<title>Universe 13: Battle Clash</title>
 		<!-- U13 loading shell (Theory 2026-10-20: "without the Godot loading screen, can we put one there instead").
 		     Godot's web shell logic (template godot.html, 4.7.2) with the Battle Clash key art, a gold progress bar,
-		     MB counter and tips. The art files (loading_wide.jpg / loading_tall.jpg) sit next to index.html. -->
+		     MB counter and tips. The art files (loading_wide.jpg / loading_tall.jpg, in godot/export/web/) must be copied next to index.html after
+		     exporting; if they are missing the page falls back to the boot splash (index.png, written by every export). -->
 		<style>
 html, body, #canvas {
 	margin: 0;
@@ -147,7 +148,7 @@ body {
 		<div id="status">
 			<picture>
 				<source media="(orientation: portrait)" srcset="loading_tall.jpg">
-				<img id="u13-art" src="loading_wide.jpg" alt="Universe 13: Battle Clash">
+				<img id="u13-art" src="loading_wide.jpg" alt="Universe 13: Battle Clash" onerror="this.onerror=null;this.parentNode.querySelector('source').remove();this.src='index.png';">
 			</picture>
 			<div id="u13-shade"></div>
 			<div id="u13-load">
@@ -155,7 +156,7 @@ body {
 				<div id="u13-bar"><div id="u13-fill" class="u13-busy"></div></div>
 				<div id="u13-meta"><span id="u13-mb">Connecting...</span><span id="u13-pct"></span></div>
 				<div id="u13-tip"></div>
-				<div id="u13-note">First visit downloads the whole game (about 880 MB). Next time it loads from your browser cache.</div>
+				<div id="u13-note">First visit downloads the whole game (about 955 MB). Next time it loads from your browser cache.</div>
 			</div>
 			<div id="status-notice"></div>
 		</div>
@@ -164,7 +165,7 @@ body {
 		<script src="u13-pack-loader.js"></script>
 		<script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":false,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":848106684,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":false,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":961599480,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
