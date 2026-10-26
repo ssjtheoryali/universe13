@@ -156,7 +156,7 @@ body {
 				<div id="u13-bar"><div id="u13-fill" class="u13-busy"></div></div>
 				<div id="u13-meta"><span id="u13-mb">Connecting...</span><span id="u13-pct"></span></div>
 				<div id="u13-tip"></div>
-				<div id="u13-note">First visit downloads the whole game (about 955 MB). Next time it loads from your browser cache.</div>
+				<div id="u13-note">First visit downloads the whole game (about 780 MB). Next time it loads from your browser cache.</div>
 			</div>
 			<div id="status-notice"></div>
 		</div>
@@ -165,7 +165,7 @@ body {
 		<script src="u13-pack-loader.js"></script>
 		<script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":false,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":961599480,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":false,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":778461468,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
@@ -280,7 +280,10 @@ const engine = new Engine(GODOT_CONFIG);
 		}
 	} else {
 		setStatusMode('progress');
+		// ?u13args=--quick%20--stage=x hands the game its command line (the web FPS test opens a fight straight away)
+		const u13args = (new URLSearchParams(location.search).get('u13args') || '').split(' ').filter(Boolean);
 		engine.startGame({
+			'args': u13args.length ? ['--'].concat(u13args) : [],
 			'onProgress': function (current, total) {
 				if (current > 0 && total > 0) {
 					fill.classList.remove('u13-busy');
