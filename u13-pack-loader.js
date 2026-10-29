@@ -43,6 +43,8 @@
   window.fetch = function (input, init) {
     var url = typeof input === 'string' ? input : (input && input.url) || '';
     if (/(^|\/)index\.pck(\?|#|$)/.test(url)) return Promise.resolve(packResponse());
+    // a new build must never run an old cached engine: the wasm is fetched under the build's version (split_pack --build)
+    if (P.build && typeof input === 'string' && /(^|\/)index\.wasm$/.test(url)) return origFetch(url + '?v=' + encodeURIComponent(P.build), init);
     return origFetch(input, init);
   };
 })();

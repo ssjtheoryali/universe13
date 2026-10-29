@@ -111,6 +111,34 @@ body {
 	color: rgba(255, 255, 255, 0.5);
 	font: 400 clamp(10px, 1.1vw, 12px) Arial, sans-serif;
 }
+#u13-gfx {
+	margin-top: 12px;
+	color: rgba(255, 255, 255, 0.7);
+	font: 700 clamp(10px, 1.1vw, 12px) Arial, sans-serif;
+	letter-spacing: 0.12em;
+}
+#u13-gfx button {
+	margin: 4px 3px 0;
+	min-height: 32px;
+	padding: 0 10px;
+	border-radius: 6px;
+	border: 1px solid rgba(255, 210, 74, 0.5);
+	background: rgba(8, 8, 18, 0.7);
+	color: #fff;
+	font: inherit;
+	cursor: pointer;
+}
+#u13-gfx button.on {
+	background: #ffd24a;
+	color: #120c02;
+}
+#u13-version {
+	position: absolute;
+	right: max(10px, env(safe-area-inset-right));
+	bottom: max(8px, env(safe-area-inset-bottom));
+	color: rgba(255, 255, 255, 0.4);
+	font: 400 11px Arial, sans-serif;
+}
 #status-notice {
 	display: none;
 	position: absolute;
@@ -156,16 +184,65 @@ body {
 				<div id="u13-bar"><div id="u13-fill" class="u13-busy"></div></div>
 				<div id="u13-meta"><span id="u13-mb">Connecting...</span><span id="u13-pct"></span></div>
 				<div id="u13-tip"></div>
-				<div id="u13-note">First visit downloads the whole game (about 880 MB). Next time it loads from your browser cache.</div>
+				<div id="u13-gfx">GRAPHICS <button data-q="auto">AUTO</button><button data-q="low">LOW</button><button data-q="balanced">BALANCED</button><button data-q="high">HIGH</button></div>
+				<div id="u13-note">First visit downloads the whole game. Next time it loads from your browser cache. Change graphics any time in SETTINGS.</div>
 			</div>
 			<div id="status-notice"></div>
+			<div id="u13-version"></div>
 		</div>
 
-		<script src="u13-pack.js"></script>
-		<script src="u13-pack-loader.js"></script>
-		<script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":false,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":895895032,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+// GRAPHICS PRESET, picked BEFORE the engine starts (modes/shared/gfx.gd reads window.U13Gfx; Theory 2026-10-29 web & mobile
+// directive). The first recommendation comes from what the device reports - its GPU (WebGL renderer), memory, cores and
+// whether it is a touch screen - not from the browser name alone; in the game AUTO then measures the real frame rate and
+// steps down if needed. The preset also caps the page's pixel ratio (a phone at 3x draws 9x the pixels of 1x): Godot sizes
+// its canvas from window.devicePixelRatio, so the getter is capped here. ?gfx=low|balanced|high|auto overrides (tests).
+(function () {
+	var choice = 'auto', rec = null;
+	try { choice = localStorage.getItem('u13_gfx') || 'auto'; rec = localStorage.getItem('u13_gfx_rec'); } catch (e) {}
+	var q = new URLSearchParams(location.search).get('gfx');
+	if (q && /^(auto|low|balanced|high)$/.test(q)) { choice = q; try { localStorage.setItem('u13_gfx', q); } catch (e) {} }
+	var gpu = '';
+	try {
+		var c = document.createElement('canvas');
+		var gl = c.getContext('webgl2') || c.getContext('webgl');
+		if (gl) {
+			var ext = gl.getExtension('WEBGL_debug_renderer_info');
+			gpu = String(ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER));
+			var lose = gl.getExtension('WEBGL_lose_context');
+			if (lose) lose.loseContext();
+		}
+	} catch (e) {}
+	function guess() {
+		var g = gpu.toLowerCase(), mem = navigator.deviceMemory || 0, cores = navigator.hardwareConcurrency || 4;
+		var touch = window.matchMedia && matchMedia('(pointer: coarse)').matches;
+		if (/swiftshader|llvmpipe|software|basic render/.test(g)) return 'low';
+		if (mem && mem <= 4) return 'low';
+		if (/intel.*(hd|uhd)( graphics)?|mali-[gt]?[4-7]\d\b|adreno.{0,12}([3-5]\d\d|6[0-1]\d)|powervr|videocore/.test(g)) return 'low';
+		if (!touch && /nvidia|geforce|rtx|gtx|radeon (rx|pro)|arc\(tm\)|apple m\d/.test(g) && cores >= 6) return 'high';
+		if (cores <= 4) return 'low';
+		return 'balanced';
+	}
+	if (!/^(low|balanced|high)$/.test(rec || '')) rec = guess();
+	var CAP = { low: 1, balanced: 1.5, high: 2 };
+	var real = window.devicePixelRatio || 1;
+	var G = window.U13Gfx = { choice: choice, rec: rec, gpu: gpu, realDpr: real };
+	G.set = function (c) {
+		G.choice = c;
+		G.level = c === 'auto' ? G.rec : c;
+		G.dpr = Math.min(real, CAP[G.level]);
+		try { localStorage.setItem('u13_gfx', c); } catch (e) {}
+	};
+	G.set(choice);
+	try { Object.defineProperty(window, 'devicePixelRatio', { get: function () { return G.dpr; }, configurable: true }); } catch (e) {}
+	console.log('U13 GFX page: ' + G.level + ' (choice ' + G.choice + ', rec ' + G.rec + ', dpr ' + G.dpr + ' of ' + real + ', gpu ' + gpu + ')');
+})();
+		</script>
+		<script src="u13-pack.js?v=2026.10.29.1522-ecad399"></script>
+		<script src="u13-pack-loader.js?v=2026.10.29.1522-ecad399"></script>
+		<script src="index.js?v=2026.10.29.1522-ecad399"></script>
+		<script>
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":false,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":862566180,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
@@ -199,6 +276,19 @@ const engine = new Engine(GODOT_CONFIG);
 	}
 	nextTip();
 	const tipTimer = setInterval(nextTip, 5000);
+
+	// graphics picker on the loading screen (the game reads window.U13Gfx when it starts, so a pick here needs no reload)
+	const gfxBtns = document.querySelectorAll('#u13-gfx button');
+	function showGfx() {
+		gfxBtns.forEach((b) => {
+			b.classList.toggle('on', b.dataset.q === window.U13Gfx.choice);
+			if (b.dataset.q === 'auto') b.textContent = 'AUTO (' + window.U13Gfx.rec.toUpperCase() + ')';
+		});
+	}
+	gfxBtns.forEach((b) => b.addEventListener('click', () => { window.U13Gfx.set(b.dataset.q); showGfx(); }));
+	showGfx();
+	const P = window.U13_PACK || {};
+	document.getElementById('u13-version').textContent = P.build ? 'Universe 13 · ' + P.build : '';
 
 	let initializing = true;
 	let statusMode = '';
