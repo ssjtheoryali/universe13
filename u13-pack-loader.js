@@ -9,13 +9,22 @@
   var P = window.U13_PACK;
   if (!P || !P.parts || !P.parts.length) return;
   var origFetch = window.fetch.bind(window);
+  // iPhone (2026-10-31, "stuck at 98"): a phone connection can go silent mid-part and a stalled read never ends, so
+  // every wait has a limit; a part that stalls is fetched again from its start (STALL_MS without a byte = stalled).
+  var STALL_MS = 20000, TRIES = 5;
+  function within(p, ms, what) {
+    return new Promise(function (ok, no) {
+      var t = setTimeout(function () { no(new Error(what + ' stalled')); }, ms);
+      p.then(function (v) { clearTimeout(t); ok(v); }, function (e) { clearTimeout(t); no(e); });
+    });
+  }
 
   function getPart(i, tries) {
-    return origFetch(P.parts[i], { cache: 'default' }).then(function (r) {
+    return within(origFetch(P.parts[i], { cache: tries ? 'reload' : 'default' }), STALL_MS * 2, 'part ' + i).then(function (r) {
       if (!r.ok) throw new Error('part ' + i + ' HTTP ' + r.status);
       return r;
     }).catch(function (e) {
-      if ((tries || 0) >= 3) throw e;
+      if ((tries || 0) >= TRIES) throw e;
       return new Promise(function (ok) { setTimeout(ok, 1500 * ((tries || 0) + 1)); }).then(function () { return getPart(i, (tries || 0) + 1); });
     });
   }
@@ -30,7 +39,7 @@
     function part(i, r, tries) {
       var start = off, reader = r.body.getReader();
       function pump() {
-        return reader.read().then(function (res) {
+        return within(reader.read(), STALL_MS, 'part ' + i).then(function (res) {
           if (res.done) return;
           if (off + res.value.length > P.size) throw new Error('pack larger than expected');
           buf.set(res.value, off);
@@ -41,15 +50,17 @@
       }
       return pump().catch(function (e) {
         // a dropped connection mid-part: that part again from its start
-        if (tries >= 3) throw e;
+        try { reader.cancel(); } catch (x) {}
+        if (tries >= TRIES) throw e;
         off = start;
-        return getPart(i).then(function (r2) { return part(i, r2, tries + 1); });
+        if (tracker) tracker.loaded = off;
+        return getPart(i, 1).then(function (r2) { return part(i, r2, tries + 1); });
       });
     }
     function run(i) {
       var cur = next;
       next = i + 1 < P.parts.length ? getPart(i + 1) : null;   // prefetch the following part
-      return cur.then(function (r) { return part(i, r, 0); }).then(function () {
+      return cur.catch(function () { return getPart(i, 1); }).then(function (r) { return part(i, r, 0); }).then(function () {
         if (i + 1 < P.parts.length) return run(i + 1);
       });
     }
