@@ -19,6 +19,14 @@ body {
 	background-color: #05040a;
 	overflow: hidden;
 	touch-action: none;
+	/* phones: no text selection, long-press menu, tap flash or rubber-band scroll over the game */
+	-webkit-user-select: none;
+	user-select: none;
+	-webkit-touch-callout: none;
+	-webkit-tap-highlight-color: transparent;
+	overscroll-behavior: none;
+	position: fixed;
+	inset: 0;
 }
 #canvas {
 	display: block;
@@ -238,11 +246,11 @@ body {
 	console.log('U13 GFX page: ' + G.level + ' (choice ' + G.choice + ', rec ' + G.rec + ', dpr ' + G.dpr + ' of ' + real + ', gpu ' + gpu + ')');
 })();
 		</script>
-		<script src="u13-pack.js?v=2026.10.30.0100-2abf6b3"></script>
-		<script src="u13-pack-loader.js?v=2026.10.30.0100-2abf6b3-m1"></script>
-		<script src="index.js?v=2026.10.30.0100-2abf6b3-m1"></script>
+		<script src="u13-pack.js?v=2026.10.30.2317-6fbb649"></script>
+		<script src="u13-pack-loader.js?v=2026.10.30.2317-6fbb649"></script>
+		<script src="index.js?v=2026.10.30.2317-6fbb649"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":false,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":862603572,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":false,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":862619120,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
