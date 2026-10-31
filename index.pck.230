@@ -1,4 +1,35 @@
--7843.283203125,
+ets/external/kenney/fantasy-town/stall-red.glb",
+      "kind": "kit",
+      "clips": [],
+      "full_resolution_triangles": 270,
+      "status": "geometry_placed",
+      "region": "forest",
+      "position": [
+        6923.818359375,
+        -5369.8232421875,
+        8351.740234375
+      ],
+      "radial_up": [
+        0.5719901919364929,
+        -0.44361162185668945,
+        0.689953625202179
+      ],
+      "overview_scale": 4,
+      "overview_triangles": 72,
+      "latitude": 43.62643582799045,
+      "longitude": -37.79565705231839
+    },
+    {
+      "id": "external/kenney/fantasy-town/stall-stool",
+      "source": "res://assets/external/kenney/fantasy-town/stall-stool.glb",
+      "kind": "kit",
+      "clips": [],
+      "full_resolution_triangles": 180,
+      "status": "geometry_placed",
+      "region": "abyss",
+      "position": [
+        -8081.47607421875,
+        -7843.283203125,
         4937.6298828125
       ],
       "radial_up": [
@@ -116070,51 +116101,3 @@ x°£÷k7Â%£Ñv4A∏"}&D[±uwm9ë¶rJZKK±	å˙ÑSâﬁ{A¢ê(‘πO«1H˘Å±«H6¨“"“ÿ`)Ï/^/¥˚
 		],
 		"scale": 1.0,
 		"yaw": 0.0
-	},
-	{
-		"chunked": true,
-		"key": "corner_shop",
-		"path": "res://assets/u13/kit/city_hand/u13_corner_shop_v2.glb",
-		"pos": [
-			2604.875,
-			20.0,
-			363.534027099609
-		],
-		"scale": 1.0,
-		"yaw": -1.5707963267949
-	},
-	{
-		"chunked": true,
-		"key": "arcade",
-		"path": "res://assets/u13/kit/city_hand/u13_glb39_arcade_v2.glb",
-		"pos": [
-			2602.89990234375,
-			20.0,
-			376.467987060547
-		],
-		"scale": 1.0,
-		"yaw": -1.5707963267949
-	},
-	{
-		"chunked": true,
-		"key": "diner",
-		"path": "res://assets/u13/kit/city_hand/u13_glb40_diner_v2.glb",
-		"pos": [
-			2602.89990234375,
-			20.0,
-			387.911987304688
-		],
-		"scale": 1.0,
-		"yaw": -1.5707963267949
-	},
-	{
-		"chunked": true,
-		"key": "comic_shop",
-		"path": "res://assets/u13/kit/city_hand/u13_glb44_comic_shop_v2.glb",
-		"pos": [
-			2602.89990234375,
-			20.0,
-			399.355987548828
-		],
-		"scale": 1.0,
-		"ya

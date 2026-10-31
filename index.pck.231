@@ -1,4 +1,51 @@
-w": -1.5707963267949
+	},
+	{
+		"chunked": true,
+		"key": "corner_shop",
+		"path": "res://assets/u13/kit/city_hand/u13_corner_shop_v2.glb",
+		"pos": [
+			2604.875,
+			20.0,
+			363.534027099609
+		],
+		"scale": 1.0,
+		"yaw": -1.5707963267949
+	},
+	{
+		"chunked": true,
+		"key": "arcade",
+		"path": "res://assets/u13/kit/city_hand/u13_glb39_arcade_v2.glb",
+		"pos": [
+			2602.89990234375,
+			20.0,
+			376.467987060547
+		],
+		"scale": 1.0,
+		"yaw": -1.5707963267949
+	},
+	{
+		"chunked": true,
+		"key": "diner",
+		"path": "res://assets/u13/kit/city_hand/u13_glb40_diner_v2.glb",
+		"pos": [
+			2602.89990234375,
+			20.0,
+			387.911987304688
+		],
+		"scale": 1.0,
+		"yaw": -1.5707963267949
+	},
+	{
+		"chunked": true,
+		"key": "comic_shop",
+		"path": "res://assets/u13/kit/city_hand/u13_glb44_comic_shop_v2.glb",
+		"pos": [
+			2602.89990234375,
+			20.0,
+			399.355987548828
+		],
+		"scale": 1.0,
+		"yaw": -1.5707963267949
 	},
 	{
 		"chunked": true,
@@ -138809,52 +138856,4 @@ RØu©q\óÆã0õbt.§7³Ã!9‘t`>/¬Æ9~„~ˆd…[¸—#;‘íI`&©•>´ÚX”ï[X‚=S#k’wŠÀ“7 IìH’
 	{
 		"chunked": true,
 		"key": "midrise_apartment",
-		"path": "res://assets/u13/kit/city_hand/u13_glb2_midrise_apartment.glb",
-		"pos": [
-			2304.90014648438,
-			20.0,
-			-1005.71252441406
-		],
-		"scale": 1.0,
-		"yaw": -1.5707963267949
-	},
-	{
-		"chunked": true,
-		"key": "corner_shop",
-		"path": "res://assets/u13/kit/city_hand/u13_corner_shop_v2.glb",
-		"pos": [
-			2365.125,
-			20.0,
-			-1035.86596679688
-		],
-		"scale": 1.0,
-		"yaw": 1.5707963267949
-	},
-	{
-		"chunked": true,
-		"key": "arcade",
-		"path": "res://assets/u13/kit/city_hand/u13_glb39_arcade_v2.glb",
-		"pos": [
-			2367.10009765625,
-			20.0,
-			-1023.53198242188
-		],
-		"scale": 1.0,
-		"yaw": 1.5707963267949
-	},
-	{
-		"chunked": true,
-		"key": "diner",
-		"path": "res://assets/u13/kit/city_hand/u13_glb40_diner_v2.glb",
-		"pos": [
-			2367.10009765625,
-			20.0,
-			-1012.08801269531
-		],
-		"scale": 1.0,
-		"yaw": 1.5707963267949
-	},
-	{
-		"chunked": true,
-		"key": "comic_shop",
-		"path": "res://assets/u13/ki
+		"path": "res://assets/u13/kit/city_hand/u13_glb2_midri
