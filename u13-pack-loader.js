@@ -114,14 +114,24 @@
         }
       }
     }
-    // the part after the one just read is fetched in the background (reads mostly run forward through a file)
-    function warm(i) {
-      if (i >= N || cache[i] || pending[i]) return;
-      pending[i] = 1;
-      origFetch(P.parts[i]).then(function (r) { return r.arrayBuffer(); }).then(function (b) {
+    // the parts after the one just read are fetched in the background (reads mostly run forward through a file).
+    // 2026-10-31 (PC froze for good after START with ?pack=lazy): a background fetch made from the page is only read
+    // by the page, and the page is blocked inside the synchronous request, so the unread response filled the shared
+    // HTTP/2 connection and the synchronous request behind it never arrived. A Worker reads its responses on its own
+    // thread, so the background fetches run there; without a Worker there is no read-ahead.
+    var helper = null;
+    try {
+      helper = new Worker(URL.createObjectURL(new Blob(['onmessage=function(e){var d=e.data;fetch(d.url).then(function(r){return r.arrayBuffer()}).then(function(b){postMessage({i:d.i,b:b},[b])},function(){postMessage({i:d.i})})}'], { type: 'text/javascript' })));
+      helper.onmessage = function (e) {
+        var i = e.data.i, b = e.data.b;
         delete pending[i];
-        if (b.byteLength === partLen(i) && !cache[i]) keep(i, new Uint8Array(b));
-      }, function () { delete pending[i]; });
+        if (b && b.byteLength === partLen(i) && !cache[i]) keep(i, new Uint8Array(b));
+      };
+    } catch (e) { helper = null; }
+    function warm(i) {
+      if (!helper || i >= N || cache[i] || pending[i]) return;
+      pending[i] = 1;
+      helper.postMessage({ i: i, url: new URL(P.parts[i], location.href).href });
     }
     function chunk(i) {
       var u = cache[i];
@@ -132,7 +142,7 @@
       }
       u = syncGet(i);
       keep(i, u);
-      warm(i + 1);
+      warm(i + 1); warm(i + 2);
       return u;
     }
     function read(dst, len, pos) {
