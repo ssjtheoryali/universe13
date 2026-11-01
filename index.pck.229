@@ -1,6 +1,4 @@
-
-				"dir": null,
-				"effect": "hit"
+ "hit"
 			},
 			{
 				"air": false,
@@ -252856,4 +252854,6 @@
 				"effect": "hit"
 			},
 			{
-				"a
+				"air": false,
+				"btn": "X",
+		
